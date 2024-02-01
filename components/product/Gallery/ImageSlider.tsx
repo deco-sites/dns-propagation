@@ -65,14 +65,14 @@ export default function GallerySlider(props: Props) {
           class="no-animation absolute left-2 top-1/2 btn btn-circle btn-outline"
           disabled
         >
-          <Icon size={24} id="chevron-left" strokeWidth={3} />
+          <Icon size={24} id="ChevronLeft" strokeWidth={3} />
         </Slider.PrevButton>
 
         <Slider.NextButton
           class="no-animation absolute right-2 top-1/2 btn btn-circle btn-outline"
           disabled={images.length < 2}
         >
-          <Icon size={24} id="chevron-right" strokeWidth={3} />
+          <Icon size={24} id="ChevronRight" strokeWidth={3} />
         </Slider.NextButton>
 
         <div class="absolute top-2 right-2 bg-base-100 rounded-full">

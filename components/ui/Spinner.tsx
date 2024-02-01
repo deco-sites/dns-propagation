@@ -1,10 +1,23 @@
-import Icon from "./Icon.tsx";
-import type { ComponentProps } from "preact";
+interface Props {
+  size?: number;
+}
 
-type Props = Omit<ComponentProps<typeof Icon>, "id">;
-
-function Spinner({ class: _class, ...props }: Props) {
-  return <Icon {...props} id="loader-2" class={`animate-spin ${_class}`} />;
+function Spinner({ size = 20 }: Props) {
+  return (
+    <div
+      style={{
+        verticalAlign: "-0.125em",
+        border: "0.125em solid",
+        borderRightColor: "transparent",
+        width: size,
+        height: size,
+      }}
+      class="animate-spin inline-block border-2 rounded-full"
+      role="status"
+    >
+      <span class="hidden">Carregando...</span>
+    </div>
+  );
 }
 
 export default Spinner;

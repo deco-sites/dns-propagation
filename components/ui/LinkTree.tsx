@@ -175,7 +175,7 @@ function Links(props: Props) {
 
                 <Icon
                   size={20}
-                  id="chevron-right"
+                  id="share"
                   strokeWidth={2}
                   class="opacity-0 group-hover:opacity-100"
                 />
@@ -197,7 +197,7 @@ function Links(props: Props) {
               >
                 <Icon
                   size={20}
-                  id={"chevron-right"}
+                  id={link.label}
                   strokeWidth={link.strokeWidth || 2}
                   fill={link.iconColor}
                   style={{ color: link.iconColor }}

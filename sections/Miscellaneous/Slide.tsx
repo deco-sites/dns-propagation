@@ -15,7 +15,7 @@ export default function Slide({
     {
       label: "Label",
       repeat: 30,
-      icon: "chevron-right",
+      icon: "ChevronRight",
     },
   ],
 }: Props) {
