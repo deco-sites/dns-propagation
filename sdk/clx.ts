@@ -1,11 +1,3 @@
-/**
- * @description
- * Helper for concatenating class names without using complex string templating
- *
- * @example
- * before: <div class=`${display ? 'flex' : ''} flex-col bg-white`>
- * after: <div class={clx(display && 'flex', 'flex-col bg-white')}>
- */
-export const clx = (
-  ...args: (string | undefined | null | false | "")[]
-): string => args.filter(Boolean).join(" ");
+/** filter out nullable values, join and minify class names */
+export const clx = (...args: (string | null | undefined | false)[]) =>
+  args.filter(Boolean).join(" ").replace(/\s\s+/g, " ");
