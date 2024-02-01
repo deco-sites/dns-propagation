@@ -47,6 +47,7 @@ import * as $$$$$$39 from "./sections/Links/LinkTree.tsx";
 import * as $$$$$$40 from "./sections/Links/Shortcuts.tsx";
 import * as $$$$$$41 from "./sections/Newsletter/Newsletter.tsx";
 import * as $$$$$$42 from "./sections/Header/Header.tsx";
+import * as $$$$$$$$$0 from "./actions/queryDNS.ts";
 import * as $$$$$$$$$$$0 from "./apps/decohub.ts";
 import * as $$$$$$$$$$$1 from "./apps/site.ts";
 
@@ -105,6 +106,9 @@ const manifest = {
     "deco-sites/dns-propagation/sections/Social/InstagramPosts.tsx": $$$$$$36,
     "deco-sites/dns-propagation/sections/Social/WhatsApp.tsx": $$$$$$35,
     "deco-sites/dns-propagation/sections/Theme/Theme.tsx": $$$$$$38,
+  },
+  "actions": {
+    "deco-sites/dns-propagation/actions/queryDNS.ts": $$$$$$$$$0,
   },
   "apps": {
     "deco-sites/dns-propagation/apps/decohub.ts": $$$$$$$$$$$0,

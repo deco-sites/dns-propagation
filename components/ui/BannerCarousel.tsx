@@ -199,7 +199,7 @@ function Buttons() {
           <Icon
             class="text-base-100"
             size={24}
-            id="ChevronLeft"
+            id="chevron-left"
             strokeWidth={3}
           />
         </Slider.PrevButton>
@@ -209,7 +209,7 @@ function Buttons() {
           <Icon
             class="text-base-100"
             size={24}
-            id="ChevronRight"
+            id="chevron-right"
             strokeWidth={3}
           />
         </Slider.NextButton>

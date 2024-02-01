@@ -13,33 +13,7 @@ export interface Props {
 }
 
 export default function Shortcuts({
-  shortcuts = [
-    {
-      label: "WhatsApp",
-      icon: "WhatsApp",
-      link: "/",
-    },
-    {
-      label: "Chat",
-      icon: "Message",
-      link: "/",
-    },
-    {
-      label: "Measurements",
-      icon: "Ruler",
-      link: "/",
-    },
-    {
-      label: "Shipping",
-      icon: "Truck",
-      link: "/",
-    },
-    {
-      label: "Returns",
-      icon: "ArrowsPointingOut",
-      link: "/",
-    },
-  ],
+  shortcuts = [],
   onHover = "Show label",
 }: Props) {
   return (
