@@ -19,7 +19,7 @@ export interface Props {
   srcText?: string;
 }
 
-type RecordType =
+export type RecordType =
   | "A"
   | "AAAA"
   | "ANAME"
@@ -52,8 +52,8 @@ export default function DnsPropagation({
   const bgColor = "#02F67C";
 
   const queryDNS = async (fdqName: string, queryType: RecordType) => {
-    const resp = await invoke.actions
-      .queryDNS({
+    const resp = await invoke["deco-sites/dns-propagation"].actions
+      .queryDns({
         domainName: fdqName,
         recordType: queryType,
       });
@@ -76,10 +76,9 @@ export default function DnsPropagation({
   };
 
   const renderAnswer = (props: any) => {
-    console.log("props", props);
     return (
       <div class="w-[500px] border-t-fuchsia-600 flex flex-col justify-center items-center px-[200px] pt-10 gap-2">
-        <h1>OIIIIIi</h1>
+        <h1>Resultado!</h1>
       </div>
     );
   };

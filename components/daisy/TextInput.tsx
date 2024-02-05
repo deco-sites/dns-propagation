@@ -1,5 +1,4 @@
-import { useSignal } from "@preact/signals";
-import { Signal, useSignal } from "@preact/signals";
+import { Signal } from "@preact/signals";
 
 export interface Props {
   placeholder?: string;
@@ -40,7 +39,7 @@ export default function TextInput(props: Props) {
             border && "input-bordered"
           }`}
           onChange={(e) => {
-            textValue.value = e.target.value;
+            textValue.value = (e.target as HTMLTextAreaElement).value;
           }}
         />
         <div className="label">
