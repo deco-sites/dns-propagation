@@ -1,3 +1,6 @@
+import { useSignal } from "@preact/signals";
+import { Signal, useSignal } from "@preact/signals";
+
 export interface Props {
   placeholder?: string;
   border?: boolean;
@@ -6,6 +9,7 @@ export interface Props {
   TopRightLabel?: string;
   bottomLeftLabel?: string;
   bottomRightLabel?: string;
+  textValue: Signal<string>;
 }
 
 export default function TextInput(props: Props) {
@@ -17,6 +21,7 @@ export default function TextInput(props: Props) {
     bottomLeftLabel,
     bottomRightLabel,
     ghost,
+    textValue,
   } = props;
 
   return (
@@ -34,6 +39,9 @@ export default function TextInput(props: Props) {
           className={`input ${ghost && "input-ghost"} w-full max-w-xs ${
             border && "input-bordered"
           }`}
+          onChange={(e) => {
+            textValue.value = e.target.value;
+          }}
         />
         <div className="label">
           <span className="label-text">
