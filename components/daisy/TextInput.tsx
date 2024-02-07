@@ -1,4 +1,6 @@
 import { Signal } from "@preact/signals";
+import Icon from "../ui/Icon.tsx";
+import type { VNode } from "preact";
 
 export interface Props {
   placeholder?: string;
@@ -9,6 +11,8 @@ export interface Props {
   bottomLeftLabel?: string;
   bottomRightLabel?: string;
   textValue: Signal<string>;
+  class: string;
+  prefix?: VNode<unknown>;
 }
 
 export default function TextInput(props: Props) {
@@ -21,27 +25,36 @@ export default function TextInput(props: Props) {
     bottomRightLabel,
     ghost,
     textValue,
+    prefix,
+    class: _class,
   } = props;
 
   return (
     <>
-      <label className="form-control w-full max-w-xs">
+      <label className="form-control w-full max-w-md box-border !bg-transparent">
         <div className="label">
           <span className="label-text">{topLeftLabel ? topLeftLabel : ""}</span>
           <span className="label-text">
             {TopRightLabel ? TopRightLabel : ""}
           </span>
         </div>
-        <input
-          type="text"
-          placeholder={placeholder}
-          className={`input ${ghost && "input-ghost"} w-full max-w-xs ${
+        <div
+          class={`flex flex-row gap-2 items-center ${
             border && "input-bordered"
-          }`}
-          onChange={(e) => {
-            textValue.value = (e.target as HTMLTextAreaElement).value;
-          }}
-        />
+          } ${ghost && "input-ghost"} input 
+          ${_class}
+        `}
+        >
+          {prefix}
+          <input
+            type="text"
+            placeholder={placeholder}
+            className={`bg-transparent w-full max-w-md`}
+            onChange={(e) => {
+              textValue.value = (e.target as HTMLTextAreaElement).value;
+            }}
+          />
+        </div>
         <div className="label">
           <span className="label-text">
             {bottomLeftLabel ? bottomLeftLabel : ""}
@@ -55,3 +68,4 @@ export default function TextInput(props: Props) {
     </>
   );
 }
+{/* <div class="flex flex-col gap-2 w-full box-border"><label class="input border-base-300 focus-within:border-base-700"><div class="flex flex-row items-center flex-grow"><svg width="24" height="24" stroke-width="2" class="w-5 h-5 mr-2 text-base-500"><use href="/sprites.svg?__frsh_c=00f3912fc57a0efffbc22e5841110f0fd70ee9a3#search"></use></svg><input id="P0-17" type="text" placeholder="Search" value="" class="font-normal disabled:cursor-not-allowed read-only:cursor-not-allowed disabled:text-base-500 read-only:text-base-500 text-base-700 w-full bg-transparent focus:outline-none"></div></label></div> */}
