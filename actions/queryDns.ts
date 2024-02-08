@@ -24,7 +24,7 @@ export default async function queryDns(
 ): Promise<DnsRecord | undefined> {
   try {
     const resp = await Deno.resolveDns(domainName, recordType);
-    console.log(domainName, recordType);
+    console.log(domainName, recordType, resp);
     if (recordType === "A" || recordType === "AAAA") {
       return { type: recordType, content: resp };
     }

@@ -42,6 +42,21 @@ function TextHeroLarge(text: string | undefined) {
   );
 }
 
+function TextBodyStrong(text: string | undefined) {
+  return (
+    <span class="text-[#FAFAFA] text-[15px] font-[600] inline-flex items-center justify-start gap-1">
+      {text}
+    </span>
+  );
+}
+function TextBodyRegular(text: string | undefined) {
+  return (
+    <span class="text-[#FAFAFA] text-[15px] font-[400] inline-flex items-center justify-start gap-1">
+      {text}
+    </span>
+  );
+}
+
 export default function DnsPropagation({
   srcImage,
   srcText,
@@ -56,8 +71,8 @@ export default function DnsPropagation({
         domainName: fdqName,
         recordType: queryType,
       });
-    console.log("resp", resp);
-    queryAns.value = resp;
+    queryAns.value = { resp, domainName: fdqName };
+    console.log("queryAns", queryAns.value);
   };
 
   const renderItems = (item: any) => {
@@ -74,10 +89,28 @@ export default function DnsPropagation({
     );
   };
 
-  const renderAnswer = (props: any) => {
+  const DnsRecords = (
+    { dnsRecords }: any,
+  ) => {
+    console.log("dnsRecords", dnsRecords);
     return (
-      <div class="mx-40 w-full border-t-fuchsia-600 flex flex-col justify-center items-center px-[200px] pt-10 gap-2">
-        <h1>Resultado!</h1>
+      <div>
+        <div
+          class="grid gap-[8px 24px] gap-y-1 gap-x-8"
+          style={{ gridTemplateColumns: "repeat(3, auto)" }}
+        >
+          {TextBodyStrong("Type")}
+          {TextBodyStrong("Content")}
+          {dnsRecords.content?.map((record: any) => {
+            console.log("record", record);
+            return (
+              <>
+                {TextBodyRegular(dnsRecords.type)}
+                {TextBodyRegular(record.content)}
+              </>
+            );
+          })}
+        </div>
       </div>
     );
   };
@@ -136,7 +169,14 @@ export default function DnsPropagation({
           {"Check"}
         </Button>
       </div>
-      {queryAns.value ? (renderAnswer(queryAns.value)) : <></>}
+      {queryAns.value && (
+        <div class="px-[600px]">
+          <div class="px-2 py-2 bg-[#303D3D] flex flex-col gap-2 rounded-lg w-full border border-[#303D3D] text-[#FAFAFA]">
+            {TextBodyStrong(queryAns.value.domainName)}
+            {DnsRecords(queryAns.value)}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
