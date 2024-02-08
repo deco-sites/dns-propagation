@@ -8,6 +8,7 @@ import { useSignal } from "@preact/signals";
 import { useState } from "preact/hooks";
 import { invoke } from "$store/runtime.ts";
 import Icon from "deco-sites/dns-propagation/components/ui/Icon.tsx";
+import { DnsRecord } from "deco-sites/dns-propagation/actions/queryDns.ts";
 
 export interface Props {
   /**
@@ -62,8 +63,10 @@ export default function DnsPropagation({
   srcText,
 }: Props) {
   const searchQuery = useSignal<string>("");
-  const queryType = useSignal<RecordType>("A");
-  const queryAns = useSignal<any>(undefined);
+  const queryType = useSignal<RecordType>("CNAME");
+  const queryAns = useSignal<
+    ({ dnsRecords: DnsRecord[] | undefined; domainName: string }) | undefined
+  >(undefined);
 
   const queryDNS = async (fdqName: string, queryType: RecordType) => {
     const resp = await invoke["deco-sites/dns-propagation"].actions
@@ -71,8 +74,7 @@ export default function DnsPropagation({
         domainName: fdqName,
         recordType: queryType,
       });
-    queryAns.value = { resp, domainName: fdqName };
-    console.log("queryAns", queryAns.value);
+    queryAns.value = { dnsRecords: resp, domainName: fdqName };
   };
 
   const renderItems = (item: any) => {
@@ -90,34 +92,42 @@ export default function DnsPropagation({
   };
 
   const DnsRecords = (
-    { dnsRecords }: any,
+    dnsRecords: DnsRecord[] | undefined,
   ) => {
-    console.log("dnsRecords", dnsRecords);
     return (
-      <div>
-        <div
-          class="grid gap-[8px 24px] gap-y-1 gap-x-8"
-          style={{ gridTemplateColumns: "repeat(3, auto)" }}
-        >
-          {TextBodyStrong("Type")}
-          {TextBodyStrong("Content")}
-          {dnsRecords.content?.map((record: any) => {
-            console.log("record", record);
-            return (
-              <>
-                {TextBodyRegular(dnsRecords.type)}
-                {TextBodyRegular(record.content)}
-              </>
-            );
-          })}
-        </div>
-      </div>
+      dnsRecords
+        ? (
+          <div>
+            <div
+              class="grid gap-[8px 24px] gap-y-1 gap-x-8"
+              style={{ gridTemplateColumns: "repeat(2, auto)" }}
+            >
+              {TextBodyStrong("Type")}
+              {TextBodyStrong("Content")}
+              {dnsRecords?.map((record: any) => {
+                return (
+                  <>
+                    {TextBodyRegular(record.type)}
+                    {TextBodyRegular(record.content)}
+                  </>
+                );
+              })}
+            </div>
+          </div>
+        )
+        : (
+          <div>
+            {TextBodyRegular(
+              `No records found. It may take a while for the record to propagate. Try again later.`,
+            )}
+          </div>
+        )
     );
   };
 
   return (
     <div
-      class={`h-[100vh] w-full flex flex-col gap-8 justify-start bg-[#0D1717]`}
+      class={`h-[100vh] w-full flex flex-col gap-8 justify-start bg-primary`}
     >
       <div class="flex flex-row w-full justify-center pt-20">
         <img src={srcImage} alt="image" width="200px" />
@@ -143,15 +153,8 @@ export default function DnsPropagation({
           items={[
             { text: "A" },
             { text: "AAAA" },
-            { text: "ANAME" },
             { text: "CAA" },
             { text: "CNAME" },
-            { text: "MX" },
-            { text: "NAPTR" },
-            { text: "NS" },
-            { text: "PTR" },
-            { text: "SOA" },
-            { text: "SRV" },
             { text: "TXT" },
           ]}
           classe="!bg-[#59DA99] !text-[#161616]"
@@ -161,7 +164,6 @@ export default function DnsPropagation({
         <Button
           class="bg-[#59DA99] text-[#161616] hover:bg-[#50c48a]"
           onClick={async () => {
-            console.log("searchQuery", searchQuery.value);
             await queryDNS(searchQuery.value, queryType.value);
           }}
           disabled={false}
@@ -171,9 +173,9 @@ export default function DnsPropagation({
       </div>
       {queryAns.value && (
         <div class="px-[600px]">
-          <div class="px-2 py-2 bg-[#303D3D] flex flex-col gap-2 rounded-lg w-full border border-[#303D3D] text-[#FAFAFA]">
+          <div class="px-2 py-2 bg-[#303D3D] flex flex-col gap-2 rounded-lg w-full border border-[#303D3D] text-base">
             {TextBodyStrong(queryAns.value.domainName)}
-            {DnsRecords(queryAns.value)}
+            {DnsRecords(queryAns.value.dnsRecords)}
           </div>
         </div>
       )}

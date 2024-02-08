@@ -39,6 +39,8 @@ export interface ComplementaryColors {
   /** @format color */
   "base-300"?: string;
   /** @format color */
+  "base-700"?: string;
+  /** @format color */
   "base-content"?: string;
   /** @format color */
   "primary-content"?: string;
@@ -58,6 +60,8 @@ export interface ComplementaryColors {
   "error-content"?: string;
   /** @format color */
   "info-content"?: string;
+  /** @format color */
+  "dark-surface-interative"?: string;
 }
 
 export interface Button {
