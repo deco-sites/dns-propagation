@@ -10,9 +10,9 @@ export interface Props {
   TopRightLabel?: string;
   bottomLeftLabel?: string;
   bottomRightLabel?: string;
-  textValue: Signal<string>;
   class: string;
   prefix?: VNode<unknown>;
+  onChange?: (e: Event) => void;
 }
 
 export default function TextInput(props: Props) {
@@ -24,9 +24,9 @@ export default function TextInput(props: Props) {
     bottomLeftLabel,
     bottomRightLabel,
     ghost,
-    textValue,
     prefix,
     class: _class,
+    onChange: _onChange,
   } = props;
 
   return (
@@ -50,9 +50,7 @@ export default function TextInput(props: Props) {
             type="text"
             placeholder={placeholder}
             className={`bg-transparent w-full max-w-md`}
-            onChange={(e) => {
-              textValue.value = (e.target as HTMLTextAreaElement).value;
-            }}
+            onChange={_onChange}
           />
         </div>
         <div className="label">

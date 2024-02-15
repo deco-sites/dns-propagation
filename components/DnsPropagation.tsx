@@ -9,6 +9,7 @@ import { useState } from "preact/hooks";
 import { invoke } from "$store/runtime.ts";
 import Icon from "deco-sites/dns-propagation/components/ui/Icon.tsx";
 import { DnsRecord } from "deco-sites/dns-propagation/actions/queryDns.ts";
+import { debounce } from "std/async/debounce.ts";
 
 export interface Props {
   /**
@@ -35,24 +36,30 @@ export type RecordType =
   | "SRV"
   | "TXT";
 
-function TextHeroLarge(text: string | undefined) {
+function TextHeroLarge(text?: string, props?: string) {
   return (
-    <span class="text-[#FAFAFA] font-[600] text-[40px] leading-[48px] inline-flex items-center justify-start gap-1">
+    <span
+      class={`${props} font-[600] text-[40px] leading-[48px] inline-flex items-center justify-start gap-1`}
+    >
       {text}
     </span>
   );
 }
 
-function TextBodyStrong(text: string | undefined) {
+function TextBodyStrong(text?: string, props?: string) {
   return (
-    <span class="text-[#FAFAFA] text-[15px] font-[600] inline-flex items-center justify-start gap-1">
+    <span
+      class={`${props} text-[15px] font-[600] inline-flex items-center justify-start gap-1`}
+    >
       {text}
     </span>
   );
 }
-function TextBodyRegular(text: string | undefined) {
+function TextBodyRegular(text?: string, props?: string) {
   return (
-    <span class="text-[#FAFAFA] text-[15px] font-[400] inline-flex items-center justify-start gap-1">
+    <span
+      class={`${props} text-[15px] font-[400] inline-flex items-center justify-start gap-1`}
+    >
       {text}
     </span>
   );
@@ -62,11 +69,33 @@ export default function DnsPropagation({
   srcImage,
   srcText,
 }: Props) {
-  const searchQuery = useSignal<string>("");
+  const searchInput = useSignal<string>("");
   const queryType = useSignal<RecordType>("CNAME");
   const queryAns = useSignal<
     ({ dnsRecords: DnsRecord[] | undefined; domainName: string }) | undefined
   >(undefined);
+
+  const isValidDomainName = (
+    name: string,
+  ) => {
+    if (!name) {
+      return { status: false, message: "Domain name is empty" };
+    }
+    if (name.includes(" ")) {
+      return { status: false, message: "Domain name cannot contain spaces" };
+    }
+    if (name.includes("/")) {
+      return { status: false, message: "Domain name cannot contain slashes" };
+    }
+    return { status: true };
+  };
+
+  const domainInputError = useSignal<string | undefined>(undefined);
+
+  const debouncedVerifyDomainInput = debounce((domain: string) => {
+    const { status, message } = isValidDomainName(domain);
+    domainInputError.value = status ? undefined : message;
+  }, 250);
 
   const queryDNS = async (fdqName: string, queryType: RecordType) => {
     const resp = await invoke["deco-sites/dns-propagation"].actions
@@ -102,13 +131,13 @@ export default function DnsPropagation({
               class="grid gap-[8px 24px] gap-y-1 gap-x-8"
               style={{ gridTemplateColumns: "repeat(2, auto)" }}
             >
-              {TextBodyStrong("Type")}
-              {TextBodyStrong("Content")}
+              {TextBodyStrong("Type", "text-[#FAFAFA]")}
+              {TextBodyStrong("Content", "text-[#FAFAFA]")}
               {dnsRecords?.map((record: any) => {
                 return (
                   <>
-                    {TextBodyRegular(record.type)}
-                    {TextBodyRegular(record.content)}
+                    {TextBodyRegular(record.type, "text-[#FAFAFA]")}
+                    {TextBodyRegular(record.content, "text-[#FAFAFA]")}
                   </>
                 );
               })}
@@ -119,6 +148,7 @@ export default function DnsPropagation({
           <div>
             {TextBodyRegular(
               `No records found. It may take a while for the record to propagate. Try again later.`,
+              "text-[#FAFAFA]",
             )}
           </div>
         )
@@ -133,20 +163,35 @@ export default function DnsPropagation({
         <img src={srcImage} alt="image" width="200px" />
       </div>
       <div class="w-full flex flex-row justify-center">
-        {TextHeroLarge(srcText)}
+        {TextHeroLarge(srcText, "text-[#FAFAFA]")}
       </div>
       <div class="w-full flex flex-row justify-center items-center px-[200px] pt-6 gap-2">
-        <TextInput
-          placeholder="Enter a valid URL"
-          border={true}
-          ghost={false}
-          TopRightLabel=""
-          bottomLeftLabel=""
-          bottomRightLabel=""
-          textValue={searchQuery}
-          prefix={<Icon id="search" size={20} strokeWidth="2" />}
-          class="!bg-transparent text-[#FAFAFA] border-[#727777] focus-within:border-[#AFB6B6]"
-        />
+        <div class="flex flex-col gap-2">
+          <TextInput
+            placeholder="Enter a valid URL"
+            border={true}
+            ghost={false}
+            TopRightLabel=""
+            bottomRightLabel=""
+            prefix={<Icon id="search" size={20} strokeWidth="2" />}
+            class="!bg-transparent text-[#FAFAFA] border-[#727777] focus-within:border-[#AFB6B6]"
+            onChange={(e) => {
+              searchInput.value = (e.target as HTMLTextAreaElement).value;
+              debouncedVerifyDomainInput(
+                (e.target as HTMLTextAreaElement).value,
+              );
+            }}
+          />
+          {domainInputError.value && (
+            <div class="flex flex-row gap-1 text-[#FF0000]">
+              <Icon id="alert-circle" size={20} strokeWidth="2" />
+              {TextBodyRegular(
+                domainInputError.value,
+                "text-[#FF0000] text-[12px]",
+              )}
+            </div>
+          )}
+        </div>
         <Dropdown
           label={`Record Type: ${queryType.value}`}
           renderItem={renderItems}
@@ -164,7 +209,7 @@ export default function DnsPropagation({
         <Button
           class="bg-[#59DA99] text-[#161616] hover:bg-[#50c48a]"
           onClick={async () => {
-            await queryDNS(searchQuery.value, queryType.value);
+            await queryDNS(searchInput.value, queryType.value);
           }}
           disabled={false}
         >
@@ -174,7 +219,7 @@ export default function DnsPropagation({
       {queryAns.value && (
         <div class="px-[600px]">
           <div class="px-2 py-2 bg-[#303D3D] flex flex-col gap-2 rounded-lg w-full border border-[#303D3D] text-base">
-            {TextBodyStrong(queryAns.value.domainName)}
+            {TextBodyStrong(queryAns.value.domainName, "text-[#FAFAFA]")}
             {DnsRecords(queryAns.value.dnsRecords)}
           </div>
         </div>
