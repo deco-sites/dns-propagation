@@ -127,7 +127,7 @@ export default function DnsPropagation({
 
   return (
     <div
-      class={`h-[100vh] w-full flex flex-col gap-8 justify-start bg-primary`}
+      class={`h-[100vh] w-full flex flex-col gap-8 justify-start bg-[#0D1717]`}
     >
       <div class="flex flex-row w-full justify-center pt-20">
         <img src={srcImage} alt="image" width="200px" />
