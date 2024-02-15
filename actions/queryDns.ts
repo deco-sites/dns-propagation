@@ -35,7 +35,9 @@ async function getCname(fqdName: string): Promise<any> {
 
   if (!response) return undefined;
 
-  return response.Answer?.map((data: any) => data.data);
+  return response.Answer?.filter((data: any) =>
+    data.name === fqdName && data.type === 5
+  ).map((data: any) => data.data);
 }
 
 async function getA(fqdName: string): Promise<any> {
@@ -45,6 +47,16 @@ async function getA(fqdName: string): Promise<any> {
 
   return response.Answer?.filter((data: any) =>
     data.name === fqdName && data.type === 1
+  ).map((data: any) => data.data);
+}
+
+async function getTxt(fqdName: string): Promise<any> {
+  const response = await dnsQueryCloudflare(fqdName, "TXT");
+
+  if (!response) return undefined;
+
+  return response.Answer?.filter((data: any) =>
+    data.name === fqdName && data.type === 16
   ).map((data: any) => data.data);
 }
 
@@ -58,7 +70,7 @@ async function getAAAA(fqdName: string): Promise<any> {
   ).map((data: any) => data.data);
 }
 
-async function getCaa(fqdName: string): Promise<CaaRecord | undefined> {
+async function getCaa(fqdName: string): Promise<CaaRecord[] | undefined> {
   const resp = await dnsQueryCloudflare(fqdName, "CAA");
   if (resp.Answer === undefined) return undefined;
 
@@ -105,7 +117,7 @@ interface CaaRecord {
 export default async function queryDns(
   { domainName, recordType }: Props,
 ): Promise<DnsRecord[] | undefined> {
-  const CaaRecordToString = (record: CaaRecord | undefined) => {
+  const CaaRecordToString = (record: CaaRecord) => {
     if (!record) return undefined;
     return `${record.critical ? "1" : "0"} ${record.tag} ${record.value}`;
   };
@@ -113,12 +125,12 @@ export default async function queryDns(
   try {
     let resp = undefined;
     if (recordType === "CAA") {
-      resp = await getCaa(domainName).then((data) => {
-        return CaaRecordToString(data);
-      });
+      resp = await getCaa(domainName);
+      resp = resp?.map(CaaRecordToString);
     } else if (recordType === "CNAME") resp = await getCname(domainName);
     else if (recordType === "A") resp = await getA(domainName);
     else if (recordType === "AAAA") resp = await getAAAA(domainName);
+    else if (recordType === "TXT") resp = await getTxt(domainName);
 
     return resp.length == 0 ? undefined : resp.map((record: string) => {
       return { type: recordType, content: record };
