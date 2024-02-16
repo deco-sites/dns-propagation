@@ -172,8 +172,8 @@ export default function DnsPropagation({
         </Button>
       </div>
       {queryAns.value && (
-        <div class="px-[600px]">
-          <div class="px-2 py-2 bg-[#303D3D] flex flex-col gap-2 rounded-lg w-full border border-[#303D3D] text-base">
+        <div class="flex flex-row justify-center">
+          <div class="px-2 py-2 bg-[#303D3D] flex flex-col gap-2 rounded-lg w-full border border-[#303D3D] text-base min-w-72 max-w-[600px]">
             {TextBodyStrong(queryAns.value.domainName)}
             {DnsRecords(queryAns.value.dnsRecords)}
           </div>

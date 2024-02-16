@@ -35,6 +35,8 @@ export interface ThemeColors {
 
 export interface ComplementaryColors {
   /** @format color */
+  "base-000"?: string;
+  /** @format color */
   "base-200"?: string;
   /** @format color */
   "base-300"?: string;
@@ -62,6 +64,14 @@ export interface ComplementaryColors {
   "info-content"?: string;
   /** @format color */
   "dark-surface-interative"?: string;
+  /** @format color */
+  "positive-100"?: string;
+  /** @format color */
+  "positive-200"?: string;
+  /** @format color */
+  "positive-800"?: string;
+  /** @format color */
+  "positive-900"?: string;
 }
 
 export interface Button {
@@ -176,6 +186,7 @@ const toVariables = (
     "--n": t["neutral"],
     "--nc": t["neutral-content"] ?? contrasted(t["neutral"]),
 
+    "--b0": t["base-000"] ?? darken(t["base-100"], 0.07),
     "--b1": t["base-100"],
     "--b2": t["base-200"] ?? darken(t["base-100"], 0.07),
     "--b3": t["base-300"] ?? darken(t["base-100"], 0.14),
